@@ -13,6 +13,7 @@ import 'simplelightbox/dist/simple-lightbox.min.css';
 const searchForm = document.querySelector('.form');
 const galleryOfPictures = document.querySelector('.gallery');
 const loader = document.querySelector('.loader');
+const loadButton = document.querySelector('.load');
 const lightbox = new SimpleLightbox('.gallery a', {
   captionDelay: 250,
   captionsData: 'alt',
@@ -60,6 +61,8 @@ async function createGallery(value) {
     class="gallery-image"
     src="${webformatURL}"
     alt="${tags}"
+    width="360" 
+    height="200"
     />
     </a>
     <div class="container">
@@ -82,22 +85,23 @@ async function createGallery(value) {
     </div>
     </li>`
   );
-  return markup.join();
+  return markup.join('');
 }
 
 // Слухач форми
 searchForm.addEventListener('submit', async event => {
   event.preventDefault();
   galleryOfPictures.innerHTML = '';
-  loader.style.display = 'block';
   const searchQuery = event.currentTarget.elements.delay.value.trim();
-  if (!searchQuery) {
+  loader.style.display = 'block';
+  if (searchQuery === '') {
     iziToast.warning({
       title: 'Warning!',
       message: 'All fileds must be filled!',
       position: 'topRight',
     });
     galleryOfPictures.innerHTML = '';
+    loader.style.display = 'none';
     return;
   }
   try {
