@@ -17,64 +17,97 @@ const lightbox = new SimpleLightbox('.gallery a', {
   captionDelay: 250,
   captionsData: 'alt',
 });
+let page = 1;
+let perPage = 40;
 
-// Створення розмітки
-async function createMarkup(value) {
-  await axios.get('https://pixabay.com/api/').then(response => {
-    console.log(response);
+// Функція запиту на сервер та параметри запиту
+async function fetchPosts(value) {
+  const params = new URLSearchParams({
+    key: '41859392-e5bc4a8d4ece805d6453ecbd7',
+    q: value,
+    per_page: perPage,
+    page: page,
   });
-  let markup = hits
-    .map(
-      ({
-        webformatURL,
-        largeImageURL,
-        tags,
-        likes,
-        views,
-        comments,
-        downloads,
-      }) =>
-        `<li class="gallery-item">
-      <a  href="${largeImageURL}">
-        <img 
-          class="gallery-image"
-          src="${webformatURL}"
-          alt="${tags}"
-          width="360" 
-          height="200"
-        />
-        </a>
-        <div class="container">
-        <div class="description">
-        <p class="info">Likes:</p>
-        <p>${likes}</p>
-        </div>
-        <div class="description">
-        <p class="info">Views:</p>
-        <p>${views}</p>
-        </div>
-        <div class="description">
-        <p class="info">Comments:</p>
-        <p>${comments}</p>
-        </div>
-        <div class="description">
-        <p class="info">Downloads:</p>
-        <p>${downloads}</p>
-        </div>
-        </div>
-      </li>`
-    )
-    .join('');
-  loader.style.display = 'none';
-  galleryOfPictures.innerHTML = markup;
-  lightbox.refresh();
+
+  try {
+    const response = await axios.get(`https://pixabay.com/api/?${params}`);
+
+    if (response.data.hits.length === 0) {
+      iziToast.error({
+        title: 'Error!',
+        message:
+          'Sorry, there are no images matching your search query. Please try again!',
+        position: 'topRight',
+      });
+      galleryOfPictures.innerHTML = '';
+      return;
+    }
+
+    return createGallery(response.data.hits);
+  } catch (error) {
+    console.error(error);
+    iziToast.error({
+      title: 'Error!',
+      message:
+        'Sorry, there are no images matching your search query. Please try again!',
+      position: 'topRight',
+    });
+  } finally {
+    searchForm.elements.delay.value = '';
+    loader.style.display = 'none';
+  }
+}
+
+// Функція для створення галереї
+async function createGallery(value) {
+  const markup = await value.map(
+    ({
+      webformatURL,
+      largeImageURL,
+      tags,
+      likes,
+      views,
+      comments,
+      downloads,
+    }) => `<li class="gallery-item">
+    <a  href="${largeImageURL}">
+    <img 
+    class="gallery-image"
+    src="${webformatURL}"
+    alt="${tags}"
+    width="360" 
+    height="200"
+    />
+    </a>
+    <div class="container">
+    <div class="description">
+    <p class="info">Likes:</p>
+    <p>${likes}</p>
+    </div>
+    <div class="description">
+    <p class="info">Views:</p>
+    <p>${views}</p>
+    </div>
+    <div class="description">
+    <p class="info">Comments:</p>
+    <p>${comments}</p>
+    </div>
+    <div class="description">
+    <p class="info">Downloads:</p>
+    <p>${downloads}</p>
+    </div>
+    </div>
+    </li>`
+  );
+  return markup.join();
 }
 
 // Слухач форми
-searchForm.addEventListener('submit', event => {
+searchForm.addEventListener('submit', async event => {
   event.preventDefault();
   galleryOfPictures.innerHTML = '';
   const searchQuery = event.currentTarget.elements.delay.value.trim();
+  const gallery = await fetchPosts(searchQuery);
   if (searchQuery === '') {
     iziToast.warning({
       title: 'Warning!',
@@ -85,5 +118,6 @@ searchForm.addEventListener('submit', event => {
     return;
   }
   loader.style.display = 'block';
-  createMarkup(searchQuery);
+  galleryOfPictures.innerHTML = gallery;
+  lightbox.refresh();
 });
