@@ -110,6 +110,7 @@ searchForm.addEventListener('submit', async event => {
       const gallery = await createGallery(response.data.hits);
       galleryOfPictures.innerHTML = gallery;
       lightbox.refresh();
+      loadButton.style.display = 'block';
     }
   } catch (error) {
     console.error(error);
@@ -122,5 +123,11 @@ searchForm.addEventListener('submit', async event => {
   } finally {
     loader.style.display = 'none';
     event.target.reset();
+  }
+});
+
+loadButton.addEventListener('click', async event => {
+  page += 1;
+  if (page > 1) {
   }
 });
