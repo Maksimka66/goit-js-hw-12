@@ -40,6 +40,7 @@ async function fetchPosts(value) {
     galleryOfPictures.innerHTML = '';
     return;
   }
+  return response;
 }
 
 // Функція для створення галереї
@@ -89,7 +90,6 @@ searchForm.addEventListener('submit', async event => {
   event.preventDefault();
   galleryOfPictures.innerHTML = '';
   const searchQuery = event.currentTarget.elements.delay.value.trim();
-  await fetchPosts(searchQuery);
   loader.style.display = 'block';
   try {
     const response = await fetchPosts(searchQuery);
@@ -106,6 +106,7 @@ searchForm.addEventListener('submit', async event => {
       position: 'topRight',
     });
   } finally {
+    event.target.reset();
     loader.style.display = 'none';
   }
 });
