@@ -116,6 +116,8 @@ p {
 
 img {
   display: block;
+  width: 360px;
+  height: 200px;
 }
 
 .loader {

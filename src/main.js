@@ -18,16 +18,17 @@ const lightbox = new SimpleLightbox('.gallery a', {
   captionDelay: 250,
   captionsData: 'alt',
 });
+
 let page = 1;
 let perPage = 40;
 
 // Функція запиту на сервер та параметри запиту
-async function fetchPosts(value) {
+async function fetchPosts(value, page) {
   const params = new URLSearchParams({
     key: '41859392-e5bc4a8d4ece805d6453ecbd7',
     q: value,
     per_page: perPage,
-    page: page,
+    page,
   });
   const response = await axios.get(`https://pixabay.com/api/?${params}`);
 
@@ -61,8 +62,6 @@ async function createGallery(value) {
     class="gallery-image"
     src="${webformatURL}"
     alt="${tags}"
-    width="360" 
-    height="200"
     />
     </a>
     <div class="container">
@@ -91,6 +90,7 @@ async function createGallery(value) {
 // Слухач форми
 searchForm.addEventListener('submit', async event => {
   event.preventDefault();
+  page = 1;
   galleryOfPictures.innerHTML = '';
   const searchQuery = event.currentTarget.elements.delay.value.trim();
   loader.style.display = 'block';
@@ -105,7 +105,7 @@ searchForm.addEventListener('submit', async event => {
     return;
   }
   try {
-    const response = await fetchPosts(searchQuery);
+    const response = await fetchPosts(searchQuery, page);
     if (response) {
       const gallery = await createGallery(response.data.hits);
       galleryOfPictures.innerHTML = gallery;
@@ -120,14 +120,45 @@ searchForm.addEventListener('submit', async event => {
         'Sorry, there are no images matching your search query. Please try again!',
       position: 'topRight',
     });
+    loadButton.style.display = 'none';
   } finally {
     loader.style.display = 'none';
     event.target.reset();
   }
 });
 
+//  Слухач для кнопки Load more
 loadButton.addEventListener('click', async event => {
   page += 1;
+  const searchQuery = searchForm.elements.delay.value.trim();
+  const result = await fetchPosts(searchQuery, page);
+  if (page > result.data.totalHits) {
+    loadButton.style.display = 'none';
+    iziToast.error({
+      title: 'Error!',
+      message: `We're sorry, but you've reached the end of search results.`,
+      position: 'topRight',
+    });
+    return;
+  }
   if (page > 1) {
+    try {
+      if (result) {
+        const gallery = await createGallery(result.data.hits);
+        galleryOfPictures.innerHTML += gallery;
+        lightbox.refresh();
+        loadButton.style.display = 'block';
+      }
+    } catch (error) {
+      console.error(error);
+      iziToast.error({
+        title: 'Error!',
+        message:
+          'Sorry, there are no images matching your search query. Please try again!',
+        position: 'topRight',
+      });
+    } finally {
+      loader.style.display = 'none';
+    }
   }
 });
