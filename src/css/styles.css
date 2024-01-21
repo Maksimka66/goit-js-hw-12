@@ -47,6 +47,10 @@ button {
   border: none;
 }
 
+.load {
+  margin: 0 auto;
+}
+
 button:hover {
   background-color: #6c8cff;
 }
@@ -113,6 +117,8 @@ p {
 
 img {
   display: block;
+  width: 360px;
+  height: 200px;
 }
 
 .loader {

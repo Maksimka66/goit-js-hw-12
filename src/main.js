@@ -45,7 +45,7 @@ async function fetchPosts(value) {
 
     return createGallery(response.data.hits);
   } catch (error) {
-    console.error(error);
+    console.log(error);
     iziToast.error({
       title: 'Error!',
       message:
@@ -75,8 +75,6 @@ async function createGallery(value) {
     class="gallery-image"
     src="${webformatURL}"
     alt="${tags}"
-    width="360" 
-    height="200"
     />
     </a>
     <div class="container">
@@ -108,16 +106,10 @@ searchForm.addEventListener('submit', async event => {
   galleryOfPictures.innerHTML = '';
   const searchQuery = event.currentTarget.elements.delay.value.trim();
   const gallery = await fetchPosts(searchQuery);
-  if (searchQuery === '') {
-    iziToast.warning({
-      title: 'Warning!',
-      message: 'All fileds must be filled!',
-      position: 'topRight',
-    });
-    galleryOfPictures.innerHTML = '';
-    return;
-  }
   loader.style.display = 'block';
-  galleryOfPictures.innerHTML = gallery;
-  lightbox.refresh();
+  if (gallery) {
+    galleryOfPictures.innerHTML = gallery;
+    lightbox.refresh();
+    loader.style.display = 'none';
+  }
 });
