@@ -1,8 +1,8 @@
-import{S as f,i as p,a as y}from"./assets/vendor-eacb4d5c.js";(function(){const t=document.createElement("link").relList;if(t&&t.supports&&t.supports("modulepreload"))return;for(const e of document.querySelectorAll('link[rel="modulepreload"]'))o(e);new MutationObserver(e=>{for(const r of e)if(r.type==="childList")for(const a of r.addedNodes)a.tagName==="LINK"&&a.rel==="modulepreload"&&o(a)}).observe(document,{childList:!0,subtree:!0});function s(e){const r={};return e.integrity&&(r.integrity=e.integrity),e.referrerPolicy&&(r.referrerPolicy=e.referrerPolicy),e.crossOrigin==="use-credentials"?r.credentials="include":e.crossOrigin==="anonymous"?r.credentials="omit":r.credentials="same-origin",r}function o(e){if(e.ep)return;e.ep=!0;const r=s(e);fetch(e.href,r)}})();const m=document.querySelector(".form"),n=document.querySelector(".gallery"),c=document.querySelector(".loader"),g=new f(".gallery a",{captionDelay:250,captionsData:"alt"});let h=1,v=40;async function l(i){const t=new URLSearchParams({key:"41859392-e5bc4a8d4ece805d6453ecbd7",q:i,per_page:v,page:h});if((await y.get(`https://pixabay.com/api/?${t}`)).data.hits.length===0){p.error({title:"Error!",message:"Sorry, there are no images matching your search query. Please try again!",position:"topRight"}),n.innerHTML="";return}}async function L(i){return(await i.map(({webformatURL:s,largeImageURL:o,tags:e,likes:r,views:a,comments:d,downloads:u})=>`<li class="gallery-item">
+import{S as u,i as l,a as f}from"./assets/vendor-eacb4d5c.js";(function(){const i=document.createElement("link").relList;if(i&&i.supports&&i.supports("modulepreload"))return;for(const e of document.querySelectorAll('link[rel="modulepreload"]'))o(e);new MutationObserver(e=>{for(const r of e)if(r.type==="childList")for(const a of r.addedNodes)a.tagName==="LINK"&&a.rel==="modulepreload"&&o(a)}).observe(document,{childList:!0,subtree:!0});function t(e){const r={};return e.integrity&&(r.integrity=e.integrity),e.referrerPolicy&&(r.referrerPolicy=e.referrerPolicy),e.crossOrigin==="use-credentials"?r.credentials="include":e.crossOrigin==="anonymous"?r.credentials="omit":r.credentials="same-origin",r}function o(e){if(e.ep)return;e.ep=!0;const r=t(e);fetch(e.href,r)}})();const y=document.querySelector(".form"),n=document.querySelector(".gallery"),c=document.querySelector(".loader"),m=new u(".gallery a",{captionDelay:250,captionsData:"alt"});let g=1,h=40;async function v(s){const i=new URLSearchParams({key:"41859392-e5bc4a8d4ece805d6453ecbd7",q:s,per_page:h,page:g}),t=await f.get(`https://pixabay.com/api/?${i}`);if(t.data.hits.length===0){l.error({title:"Error!",message:"Sorry, there are no images matching your search query. Please try again!",position:"topRight"}),n.innerHTML="";return}return t}async function L(s){return(await s.map(({webformatURL:t,largeImageURL:o,tags:e,likes:r,views:a,comments:p,downloads:d})=>`<li class="gallery-item">
     <a  href="${o}">
     <img 
     class="gallery-image"
-    src="${s}"
+    src="${t}"
     alt="${e}"
     />
     </a>
@@ -17,12 +17,12 @@ import{S as f,i as p,a as y}from"./assets/vendor-eacb4d5c.js";(function(){const 
     </div>
     <div class="description">
     <p class="info">Comments:</p>
-    <p>${d}</p>
+    <p>${p}</p>
     </div>
     <div class="description">
     <p class="info">Downloads:</p>
-    <p>${u}</p>
+    <p>${d}</p>
     </div>
     </div>
-    </li>`)).join()}m.addEventListener("submit",async i=>{i.preventDefault(),n.innerHTML="";const t=i.currentTarget.elements.delay.value.trim();await l(t),c.style.display="block";try{const s=await l(t);if(s){const o=await L(s.data.hits);n.innerHTML=o,g.refresh()}}catch(s){console.error(s),p.error({title:"Error!",message:"An error occurred while fetching images. Please try again.",position:"topRight"})}finally{c.style.display="none"}});
+    </li>`)).join()}y.addEventListener("submit",async s=>{s.preventDefault(),n.innerHTML="";const i=s.currentTarget.elements.delay.value.trim();c.style.display="block";try{const t=await v(i);if(t){const o=await L(t.data.hits);n.innerHTML=o,m.refresh()}}catch(t){console.error(t),l.error({title:"Error!",message:"An error occurred while fetching images. Please try again.",position:"topRight"})}finally{s.target.reset(),c.style.display="none"}});
 //# sourceMappingURL=commonHelpers.js.map
