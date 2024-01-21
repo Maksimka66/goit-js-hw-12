@@ -89,8 +89,17 @@ async function createGallery(value) {
 searchForm.addEventListener('submit', async event => {
   event.preventDefault();
   galleryOfPictures.innerHTML = '';
-  const searchQuery = event.currentTarget.elements.delay.value.trim();
   loader.style.display = 'block';
+  const searchQuery = event.currentTarget.elements.delay.value.trim();
+  if (!searchQuery) {
+    iziToast.warning({
+      title: 'Warning!',
+      message: 'All fileds must be filled!',
+      position: 'topRight',
+    });
+    galleryOfPictures.innerHTML = '';
+    return;
+  }
   try {
     const response = await fetchPosts(searchQuery);
     if (response) {
@@ -102,11 +111,12 @@ searchForm.addEventListener('submit', async event => {
     console.error(error);
     iziToast.error({
       title: 'Error!',
-      message: 'An error occurred while fetching images. Please try again.',
+      message:
+        'Sorry, there are no images matching your search query. Please try again!',
       position: 'topRight',
     });
   } finally {
-    event.target.reset();
     loader.style.display = 'none';
+    event.target.reset();
   }
 });
