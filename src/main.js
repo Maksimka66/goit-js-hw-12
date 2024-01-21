@@ -28,10 +28,9 @@ async function fetchPosts(value) {
     per_page: perPage,
     page: page,
   });
+  const response = await axios.get(`https://pixabay.com/api/?${params}`);
 
   try {
-    const response = await axios.get(`https://pixabay.com/api/?${params}`);
-
     if (response.data.hits.length === 0) {
       iziToast.error({
         title: 'Error!',
@@ -42,8 +41,6 @@ async function fetchPosts(value) {
       galleryOfPictures.innerHTML = '';
       return;
     }
-
-    return createGallery(response.data.hits);
   } catch (error) {
     console.log(error);
     iziToast.error({
@@ -105,10 +102,7 @@ searchForm.addEventListener('submit', async event => {
   event.preventDefault();
   galleryOfPictures.innerHTML = '';
   const searchQuery = event.currentTarget.elements.delay.value.trim();
-  const gallery = await fetchPosts(searchQuery);
+  await fetchPosts(searchQuery);
   loader.style.display = 'block';
-  if (gallery) {
-    galleryOfPictures.innerHTML = gallery;
-    lightbox.refresh();
-  }
+  galleryOfPictures.innerHTML = await createGallery(response.data.hits);
 });
