@@ -110,6 +110,5 @@ searchForm.addEventListener('submit', async event => {
   if (gallery) {
     galleryOfPictures.innerHTML = gallery;
     lightbox.refresh();
-    loader.style.display = 'none';
   }
 });
