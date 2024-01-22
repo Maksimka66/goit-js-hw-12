@@ -87,6 +87,7 @@ function createGallery(value) {
 // Слухач форми
 searchForm.addEventListener('submit', async event => {
   event.preventDefault();
+  loader.style.display = 'block';
   searchQuery = searchForm.elements.delay.value.trim();
   page = 1;
   if (searchQuery === '') {
