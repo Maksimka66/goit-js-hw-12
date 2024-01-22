@@ -149,7 +149,7 @@ loadButton.addEventListener('click', async () => {
     const result = await fetchPosts(searchQuery, page);
     const maxPage = Math.ceil(result.data.totalHits / perPage);
 
-    if (page > maxPage || page === 12) {
+    if (page > maxPage) {
       iziToast.info({
         title: 'Info!',
         message: `We're sorry, but you've reached the end of search results.`,
