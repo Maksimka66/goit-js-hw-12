@@ -96,7 +96,7 @@ searchForm.addEventListener('submit', async event => {
     loader.style.display = 'none';
     iziToast.warning({
       title: 'Warning!',
-      message: 'All fileds must be filled!',
+      message: 'All fields must be filled!',
       position: 'topRight',
     });
     return;
@@ -169,10 +169,14 @@ loadButton.addEventListener('click', async () => {
         position: 'topRight',
       });
     } else {
-      galleryOfPictures.innerHTML = await createGallery(result.data.hits);
+      const newGalleryItems = await createGallery(result.data.hits);
+      galleryOfPictures.innerHTML += newGalleryItems;
       lightbox.refresh();
+      const newGalleryItemHeight = document
+        .querySelector('.gallery-item:last-child')
+        .getBoundingClientRect().height;
       window.scrollBy({
-        top: galleryItemHeight * 2,
+        top: newGalleryItemHeight * 2,
         behavior: 'smooth',
       });
       loadButton.style.display = 'block';
