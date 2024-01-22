@@ -29,6 +29,9 @@ async function fetchPosts(value, page) {
     q: value,
     per_page: perPage,
     page,
+    image_type: 'photo',
+    orientation: 'horizontal',
+    safesearch: true,
   });
   const response = await axios.get(`https://pixabay.com/api/?${params}`);
 
@@ -46,8 +49,8 @@ async function fetchPosts(value, page) {
 }
 
 // Функція для створення галереї
-async function createGallery(value) {
-  const markup = await value.map(
+function createGallery(value) {
+  const markup = value.map(
     ({
       webformatURL,
       largeImageURL,
@@ -104,6 +107,7 @@ searchForm.addEventListener('submit', async event => {
     });
     galleryOfPictures.innerHTML = '';
     loader.style.display = 'none';
+    loadButton.style.display = 'none';
     return;
   }
   try {
@@ -133,7 +137,6 @@ searchForm.addEventListener('submit', async event => {
   } finally {
     loader.style.display = 'none';
     event.target.reset();
-    loadButton.style.display = 'none';
   }
 });
 
