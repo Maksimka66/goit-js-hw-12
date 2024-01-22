@@ -104,12 +104,18 @@ searchForm.addEventListener('submit', async event => {
     });
     galleryOfPictures.innerHTML = '';
     loader.style.display = 'none';
-    loadButton.style.display = 'none';
     return;
   }
   try {
     const response = await fetchPosts(searchQuery, page);
-    if (response) {
+    if (response.data.hits.length === 0) {
+      iziToast.error({
+        title: 'Error!',
+        message:
+          'Sorry, there are no images matching your search query. Please try again!',
+        position: 'topRight',
+      });
+    } else {
       const gallery = await createGallery(response.data.hits);
       galleryOfPictures.innerHTML = gallery;
       lightbox.refresh();
@@ -127,28 +133,26 @@ searchForm.addEventListener('submit', async event => {
   } finally {
     loader.style.display = 'none';
     event.target.reset();
+    loadButton.style.display = 'none';
   }
 });
 
 //  Слухач для кнопки Load more
 loadButton.addEventListener('click', async () => {
-  page += 1;
-  const searchQuery = searchForm.elements.delay.value.trim();
-  const result = await fetchPosts(searchQuery, page);
-  const maxPage = Math.ceil(result.data.totalHits / perPage);
-
-  if (page > maxPage || page === 12) {
-    loadButton.style.display = 'none';
-    iziToast.info({
-      title: 'Info!',
-      message: `We're sorry, but you've reached the end of search results.`,
-      position: 'topRight',
-    });
-    return;
-  }
-
   try {
-    if (result) {
+    page += 1;
+    const searchQuery = searchForm.elements.delay.value.trim();
+    loadButton.style.display = 'none';
+    const result = await fetchPosts(searchQuery, page);
+    const maxPage = Math.ceil(result.data.totalHits / perPage);
+
+    if (page > maxPage || page === 12) {
+      iziToast.info({
+        title: 'Info!',
+        message: `We're sorry, but you've reached the end of search results.`,
+        position: 'topRight',
+      });
+    } else {
       const gallery = await createGallery(result.data.hits);
       galleryOfPictures.innerHTML += gallery;
       lightbox.refresh();
@@ -159,7 +163,6 @@ loadButton.addEventListener('click', async () => {
         top: galleryItemHeight * 2,
         behavior: 'smooth',
       });
-
       loadButton.style.display = 'block';
     }
   } catch (error) {
@@ -167,9 +170,10 @@ loadButton.addEventListener('click', async () => {
     iziToast.error({
       title: 'Error!',
       message:
-        'Sorry, there are no images matching your search query. Please try again!',
+        'Sorry, there was an error processing your request. Please try again!',
       position: 'topRight',
     });
+    loadButton.style.display = 'none';
   } finally {
     loader.style.display = 'none';
   }
