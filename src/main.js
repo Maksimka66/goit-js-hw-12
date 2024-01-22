@@ -111,10 +111,6 @@ searchForm.addEventListener('submit', async event => {
       const gallery = await createGallery(response.data.hits);
       galleryOfPictures.innerHTML = gallery;
       lightbox.refresh();
-      // window.scrollBy({
-      //   top: top * 4,
-      //   behavior: 'smooth',
-      // });
       loadButton.style.display = 'block';
     }
   } catch (error) {
@@ -154,10 +150,14 @@ loadButton.addEventListener('click', async event => {
       const gallery = await createGallery(result.data.hits);
       galleryOfPictures.innerHTML += gallery;
       lightbox.refresh();
+      const galleryItemHeight = document
+        .querySelector('.gallery-item')
+        .getBoundingClientRect().height;
       window.scrollBy({
-        top: top * 4,
+        top: galleryItemHeight * 2,
         behavior: 'smooth',
       });
+
       loadButton.style.display = 'block';
     }
   } catch (error) {
