@@ -118,10 +118,7 @@ searchForm.addEventListener('submit', async event => {
       galleryOfPictures.innerHTML = '';
       return;
     } else {
-      const loaderContainer = document.createElement('div');
-      loaderContainer.classList.add('loader-container');
-      loadButton.parentNode.insertBefore(loaderContainer, loadButton);
-      loaderContainer.appendChild(loader);
+      galleryOfPictures.insertAdjacentElement('beforebegin', loader);
       galleryOfPictures.innerHTML = createGallery(hits);
       lightbox.refresh();
       loader.style.display = 'none';
@@ -169,6 +166,7 @@ loadButton.addEventListener('click', async () => {
         position: 'topRight',
       });
     } else {
+      galleryOfPictures.insertAdjacentElement('afterend', loader);
       const newGalleryItems = await createGallery(result.data.hits);
       galleryOfPictures.innerHTML += newGalleryItems;
       lightbox.refresh();
