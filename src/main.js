@@ -118,6 +118,10 @@ searchForm.addEventListener('submit', async event => {
       galleryOfPictures.innerHTML = '';
       return;
     } else {
+      const loaderContainer = document.createElement('div');
+      loaderContainer.classList.add('loader-container');
+      loadButton.parentNode.insertBefore(loaderContainer, loadButton);
+      loaderContainer.appendChild(loader);
       galleryOfPictures.innerHTML = createGallery(hits);
       lightbox.refresh();
       loader.style.display = 'none';
