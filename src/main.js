@@ -103,6 +103,7 @@ searchForm.addEventListener('submit', async event => {
   }
   try {
     loader.style.display = 'block';
+    galleryOfPictures.insertAdjacentElement('beforebegin', loader);
     const {
       data: { hits, totalHits },
     } = await fetchPosts(searchQuery, page);
@@ -118,7 +119,6 @@ searchForm.addEventListener('submit', async event => {
       galleryOfPictures.innerHTML = '';
       return;
     } else {
-      galleryOfPictures.insertAdjacentElement('beforebegin', loader);
       galleryOfPictures.innerHTML = createGallery(hits);
       lightbox.refresh();
       loader.style.display = 'none';
