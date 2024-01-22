@@ -129,13 +129,13 @@ searchForm.addEventListener('submit', async event => {
 });
 
 //  Слухач для кнопки Load more
-loadButton.addEventListener('click', async event => {
+loadButton.addEventListener('click', async () => {
   page += 1;
   const searchQuery = searchForm.elements.delay.value.trim();
   const result = await fetchPosts(searchQuery, page);
   const maxPage = Math.ceil(result.data.totalHits / perPage);
 
-  if (page > maxPage || result.data.totalHits.length === 0) {
+  if (page > maxPage) {
     loadButton.style.display = 'none';
     iziToast.info({
       title: 'Info!',
