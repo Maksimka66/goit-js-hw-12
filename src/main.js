@@ -21,6 +21,9 @@ const lightbox = new SimpleLightbox('.gallery a', {
 
 let page = 1;
 let perPage = 40;
+let searchQuery;
+let lastPage;
+let galleryItemHeight;
 
 // Функція запиту на сервер та параметри запиту
 async function fetchPosts(value, page) {
@@ -34,17 +37,6 @@ async function fetchPosts(value, page) {
     safesearch: true,
   });
   const response = await axios.get(`https://pixabay.com/api/?${params}`);
-
-  if (response.data.hits.length === 0) {
-    iziToast.error({
-      title: 'Error!',
-      message:
-        'Sorry, there are no images matching your search query. Please try again!',
-      position: 'topRight',
-    });
-    galleryOfPictures.innerHTML = '';
-    return;
-  }
   return response;
 }
 
@@ -95,35 +87,52 @@ function createGallery(value) {
 // Слухач форми
 searchForm.addEventListener('submit', async event => {
   event.preventDefault();
+  searchQuery = searchForm.elements.delay.value.trim();
   page = 1;
-  galleryOfPictures.innerHTML = '';
-  const searchQuery = event.currentTarget.elements.delay.value.trim();
-  loader.style.display = 'block';
   if (searchQuery === '') {
+    loadButton.style.display = 'none';
+    galleryOfPictures.innerHTML = '';
+    loader.style.display = 'none';
     iziToast.warning({
       title: 'Warning!',
       message: 'All fileds must be filled!',
       position: 'topRight',
     });
-    galleryOfPictures.innerHTML = '';
-    loader.style.display = 'none';
-    loadButton.style.display = 'none';
     return;
   }
   try {
-    const response = await fetchPosts(searchQuery, page);
-    if (response.data.hits.length === 0) {
+    loader.style.display = 'block';
+    const {
+      data: { hits, totalHits },
+    } = await fetchPosts(searchQuery, page);
+    if (hits.length === 0) {
+      loader.style.display = 'none';
+      loadButton.style.display = 'none';
       iziToast.error({
         title: 'Error!',
         message:
           'Sorry, there are no images matching your search query. Please try again!',
         position: 'topRight',
       });
+      galleryOfPictures.innerHTML = '';
+      return;
     } else {
-      const gallery = await createGallery(response.data.hits);
-      galleryOfPictures.innerHTML = gallery;
+      galleryOfPictures.innerHTML = createGallery(hits);
       lightbox.refresh();
+      loader.style.display = 'none';
       loadButton.style.display = 'block';
+      lastPage = Math.ceil(totalHits / perPage);
+      galleryItemHeight = document
+        .querySelector('.gallery-item:first-child')
+        .getBoundingClientRect().height;
+    }
+    if (page === lastPage) {
+      loadButton.style.display = 'none';
+      iziToast.info({
+        title: 'Info!',
+        message: `We're sorry, but you've reached the end of search results.`,
+        position: 'topRight',
+      });
     }
   } catch (error) {
     console.error(error);
@@ -142,26 +151,21 @@ searchForm.addEventListener('submit', async event => {
 
 //  Слухач для кнопки Load more
 loadButton.addEventListener('click', async () => {
+  page += 1;
+  loadButton.style.display = 'none';
   try {
-    page += 1;
-    const searchQuery = searchForm.elements.delay.value.trim();
-    loadButton.style.display = 'none';
+    loader.style.display = 'block';
     const result = await fetchPosts(searchQuery, page);
-    const maxPage = Math.ceil(result.data.totalHits / perPage);
 
-    if (page >= maxPage) {
+    if (page === lastPage) {
       iziToast.info({
         title: 'Info!',
         message: `We're sorry, but you've reached the end of search results.`,
         position: 'topRight',
       });
     } else {
-      const gallery = await createGallery(result.data.hits);
-      galleryOfPictures.innerHTML += gallery;
+      galleryOfPictures.innerHTML = await createGallery(result.data.hits);
       lightbox.refresh();
-      const galleryItemHeight = document
-        .querySelector('.gallery-item')
-        .getBoundingClientRect().height;
       window.scrollBy({
         top: galleryItemHeight * 2,
         behavior: 'smooth',
