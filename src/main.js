@@ -152,11 +152,14 @@ searchForm.addEventListener('submit', async event => {
 });
 
 //  Слухач для кнопки Load more
-loadButton.addEventListener('click', async () => {
+loadButton.addEventListener('click', async event => {
   page += 1;
   loadButton.style.display = 'none';
   try {
     loader.style.display = 'block';
+    if (event) {
+      galleryOfPictures.insertAdjacentElement('afterend', loader);
+    }
     const result = await fetchPosts(searchQuery, page);
 
     if (page === lastPage) {
@@ -166,7 +169,6 @@ loadButton.addEventListener('click', async () => {
         position: 'topRight',
       });
     } else {
-      galleryOfPictures.insertAdjacentElement('afterend', loader);
       const newGalleryItems = await createGallery(result.data.hits);
       galleryOfPictures.innerHTML += newGalleryItems;
       lightbox.refresh();
