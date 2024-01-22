@@ -135,7 +135,7 @@ loadButton.addEventListener('click', async () => {
   const result = await fetchPosts(searchQuery, page);
   const maxPage = Math.ceil(result.data.totalHits / perPage);
 
-  if (page > maxPage) {
+  if (page > maxPage || page === 12) {
     loadButton.style.display = 'none';
     iziToast.info({
       title: 'Info!',
