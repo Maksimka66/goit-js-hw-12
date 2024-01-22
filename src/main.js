@@ -62,6 +62,8 @@ async function createGallery(value) {
     class="gallery-image"
     src="${webformatURL}"
     alt="${tags}"
+    width="360";
+    height="200";
     />
     </a>
     <div class="container">
