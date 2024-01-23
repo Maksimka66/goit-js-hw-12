@@ -84,6 +84,19 @@ function createGallery(value) {
   return markup.join('');
 }
 
+function hasMoreData() {
+  if (page < lastPage) {
+    loadButton.style.display = 'block';
+  } else {
+    loadButton.style.display = 'none';
+    iziToast.info({
+      title: 'Info!',
+      message: `We're sorry, but you've reached the end of search results.`,
+      position: 'topRight',
+    });
+  }
+}
+
 // Слухач форми
 searchForm.addEventListener('submit', async event => {
   event.preventDefault();
@@ -124,20 +137,13 @@ searchForm.addEventListener('submit', async event => {
     } else {
       galleryOfPictures.innerHTML = createGallery(hits);
       lightbox.refresh();
+      hasMoreData();
       loader.style.display = 'none';
       loadButton.style.display = 'block';
       lastPage = Math.ceil(totalHits / perPage);
       galleryItemHeight = document
         .querySelector('.gallery-item:first-child')
         .getBoundingClientRect().height;
-    }
-    if (page === lastPage) {
-      loadButton.style.display = 'none';
-      iziToast.info({
-        title: 'Info!',
-        message: `We're sorry, but you've reached the end of search results.`,
-        position: 'topRight',
-      });
     }
   } catch (error) {
     console.error(error);
@@ -162,26 +168,17 @@ loadButton.addEventListener('click', async event => {
     loader.style.display = 'block';
     galleryOfPictures.insertAdjacentElement('afterend', loader);
     const result = await fetchPosts(searchQuery, page);
-
-    if (page === lastPage) {
-      iziToast.info({
-        title: 'Info!',
-        message: `We're sorry, but you've reached the end of search results.`,
-        position: 'topRight',
-      });
-    } else {
-      const newGalleryItems = await createGallery(result.data.hits);
-      galleryOfPictures.innerHTML += newGalleryItems;
-      lightbox.refresh();
-      const newGalleryItemHeight = document
-        .querySelector('.gallery-item:last-child')
-        .getBoundingClientRect().height;
-      window.scrollBy({
-        top: newGalleryItemHeight * 2,
-        behavior: 'smooth',
-      });
-      loadButton.style.display = 'block';
-    }
+    hasMoreData();
+    const newGalleryItems = await createGallery(result.data.hits);
+    galleryOfPictures.innerHTML += newGalleryItems;
+    lightbox.refresh();
+    const newGalleryItemHeight = document
+      .querySelector('.gallery-item:last-child')
+      .getBoundingClientRect().height;
+    window.scrollBy({
+      top: newGalleryItemHeight * 2,
+      behavior: 'smooth',
+    });
   } catch (error) {
     console.error(error);
     iziToast.error({
