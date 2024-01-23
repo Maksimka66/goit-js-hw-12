@@ -139,7 +139,6 @@ searchForm.addEventListener('submit', async event => {
       lightbox.refresh();
       hasMoreData();
       loader.style.display = 'none';
-      loadButton.style.display = 'block';
       lastPage = Math.ceil(totalHits / perPage);
       galleryItemHeight = document
         .querySelector('.gallery-item:first-child')
