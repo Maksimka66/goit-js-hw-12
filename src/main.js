@@ -87,7 +87,9 @@ function createGallery(value) {
 // Слухач форми
 searchForm.addEventListener('submit', async event => {
   event.preventDefault();
+  galleryOfPictures.innerHTML = '';
   loader.style.display = 'block';
+  loadButton.style.display = 'none';
   searchQuery = searchForm.elements.delay.value.trim();
   page = 1;
   if (searchQuery === '') {
@@ -103,6 +105,7 @@ searchForm.addEventListener('submit', async event => {
   }
   try {
     loader.style.display = 'block';
+    galleryOfPictures.innerHTML = '';
     galleryOfPictures.insertAdjacentElement('beforebegin', loader);
     const {
       data: { hits, totalHits },
@@ -157,9 +160,7 @@ loadButton.addEventListener('click', async event => {
   loadButton.style.display = 'none';
   try {
     loader.style.display = 'block';
-    if (event) {
-      galleryOfPictures.insertAdjacentElement('afterend', loader);
-    }
+    galleryOfPictures.insertAdjacentElement('afterend', loader);
     const result = await fetchPosts(searchQuery, page);
 
     if (page === lastPage) {
