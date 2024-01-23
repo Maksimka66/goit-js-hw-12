@@ -137,13 +137,13 @@ searchForm.addEventListener('submit', async event => {
     } else {
       galleryOfPictures.innerHTML = createGallery(hits);
       lightbox.refresh();
-      hasMoreData();
       loader.style.display = 'none';
       lastPage = Math.ceil(totalHits / perPage);
       galleryItemHeight = document
         .querySelector('.gallery-item:first-child')
         .getBoundingClientRect().height;
     }
+    hasMoreData();
   } catch (error) {
     console.error(error);
     iziToast.error({
